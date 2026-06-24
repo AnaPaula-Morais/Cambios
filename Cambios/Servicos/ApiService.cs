@@ -1,6 +1,4 @@
-﻿
-
-namespace Cambios.Servicos
+﻿namespace Cambios.Servicos
 {
     using Modelos;
     using Newtonsoft.Json;

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Text;
-using System.Web;
-using Cambios.Modelos;
-
-namespace Cambios.Servicos
+﻿namespace Cambios.Servicos
 {
+    using Modelos;
+    using Microsoft.Data.Sqlite;
     public class DataService
     {
-        private SQLiteConnection connection;
-        private SQLiteCommand command;
+        private SqliteConnection connection;
+        private SqliteCommand command;
         private DialogService dialogService;
 
         public DataService()
@@ -27,16 +22,17 @@ namespace Cambios.Servicos
 
             try
             {
-                connection = new SQLiteConnection("Data Source = " + path);
+                connection = new SqliteConnection("Data Source = " + path);
                 connection.Open();
 
-                string sqlcommand = 
+                string sqlcommand =
                     "CREATE TABLE IF NOT EXISTS rates(RateId int, Code varchar(5), TaxRate real," +
                     "Name varchar(250))";
-                command = new SQLiteCommand(sqlcommand, connection);
+                command = new SqliteCommand(sqlcommand, connection);
                 command.ExecuteNonQuery();
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 dialogService.ShowMessage("Erro", e.Message);
             }
         }
@@ -45,16 +41,16 @@ namespace Cambios.Servicos
         {
             try
             {
-                foreach(var rate in Rates)
+                foreach (var rate in Rates)
                 {
-                    string sql = string.Format("INSERT INTO Rates(RateId, Code, TaxRate, Name) values ({0},'{1}',{2},'{3}')", 
+                    string sql = string.Format("INSERT INTO Rates(RateId, Code, TaxRate, Name) values ({0},'{1}',{2},'{3}')",
                         rate.RateId, rate.Code, rate.TaxRate, rate.Name);
-                    command = new SQLiteCommand(sql, connection);
+                    command = new SqliteCommand(sql, connection);
                     command.ExecuteNonQuery();
                 }
                 connection.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 dialogService.ShowMessage("Erro", e.Message);
             }
@@ -66,19 +62,19 @@ namespace Cambios.Servicos
             try
             {
                 string sql = "SELECT RateId, Code, TaxRate, Name FROM Rates";
-                command = new SQLiteCommand(sql, connection);
+                command = new SqliteCommand(sql, connection);
 
                 //Ler cada registo/linha da tabela
-                SQLiteDataReader reader = command.ExecuteReader();
+                SqliteDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
                     rates.Add(new Rate
                     {
-                        RateId = (int)reader["RateId"],
-                        Code = (string)reader["Code"],
-                        TaxRate = (double)reader["TaxRate"],
-                        Name = (string)reader["Name"],
+                        RateId = Convert.ToInt32(reader["RateId"]),
+                        Code = Convert.ToString(reader["Code"]),
+                        TaxRate = Convert.ToDouble(reader["TaxRate"]),
+                        Name = Convert.ToString(reader["Name"]),
                     });
                 }
                 connection.Close();
@@ -96,12 +92,12 @@ namespace Cambios.Servicos
         {
             try
             {
-                string sql = "DELETE FROM Rates"; 
-                command = new SQLiteCommand(sql, connection);
+                string sql = "DELETE FROM Rates";
+                command = new SqliteCommand(sql, connection);
 
                 command.ExecuteNonQuery();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 dialogService.ShowMessage("Erro", e.Message);
             }

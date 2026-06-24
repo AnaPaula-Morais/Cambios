@@ -4,18 +4,25 @@
     using Modelos;
     public class NetworkService
     {
-        public Resposnse CheckConnection()
+        public async Task<Resposnse> CheckConnection()
         {
-            var client = new WebClient();
+            var client = new HttpClient();
             try
             {
-                using (client.OpenRead("http://clients3.google.com/generate_204"))
+                var response = await client.GetAsync("http://clients3.google.com/generate_204");
+                if (response.IsSuccessStatusCode)
                 {
                     return new Resposnse
                     {
                         IsSuccess = true
                     };
-                }
+                } 
+                
+                return new Resposnse
+                {
+                    IsSuccess = false,
+                    Message = "Configure a sua ligação com a internt",
+                };
             }
             catch
             {

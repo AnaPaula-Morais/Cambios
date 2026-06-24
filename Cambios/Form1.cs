@@ -31,7 +31,7 @@ namespace Cambios
             bool load;
 
             labelResultado.Text = "A atualizar taxas...";
-            var connection = networkService.CheckConnection();
+            var connection = await networkService.CheckConnection();
 
             if (!connection.IsSuccess)
             {
